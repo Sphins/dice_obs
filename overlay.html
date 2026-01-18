@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dice OBS Overlay</title>
+    <link rel="stylesheet" href="overlay.css" />
+  </head>
+  <body>
+    <main id="overlay" aria-live="polite"></main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const MODULE_ID = "dice-obs-overlay";
+      const overlay = document.getElementById("overlay");
+
+      const queue = [];
+      const active = new Set();
+
+      function applySettings(settings) {
+        if (!settings) return;
+        overlay.style.setProperty("--overlay-x", `${settings.positionX ?? 30}px`);
+        overlay.style.setProperty("--overlay-y", `${settings.positionY ?? 30}px`);
+        overlay.style.setProperty("--overlay-width", `${settings.width ?? 360}px`);
+      }
+
+      function scheduleHide(element, duration) {
+        window.setTimeout(() => {
+          element.classList.add("is-hiding");
+          window.setTimeout(() => {
+            active.delete(element);
+            element.remove();
+            flushQueue();
+          }, 300);
+        }, duration);
+      }
+
+      function renderPopup(payload) {
+        const card = document.createElement("section");
+        card.className = "roll-popup";
+
+        const header = document.createElement("header");
+        header.className = "roll-header";
+        header.textContent = payload.speaker || payload.user;
+
+        const flavor = document.createElement("div");
+        flavor.className = "roll-flavor";
+        flavor.textContent = payload.flavor || "";
+
+        const formula = document.createElement("div");
+        formula.className = "roll-formula";
+        formula.textContent = payload.formula || "";
+
+        const total = document.createElement("div");
+        total.className = "roll-total";
+        total.textContent = payload.total ?? "";
+
+        card.append(header, flavor, formula, total);
+        overlay.appendChild(card);
+        active.add(card);
+
+        const duration = payload.settings?.displayDurationMs ?? 5000;
+        scheduleHide(card, duration);
+      }
+
+      function flushQueue() {
+        while (queue.length > 0 && active.size < maxVisible()) {
+          renderPopup(queue.shift());
+        }
+      }
+
+      function maxVisible() {
+        if (!queue.lastSettings) return 2;
+        return queue.lastSettings.maxPopups ?? 2;
+      }
+
+      function handlePayload(payload) {
+        if (!payload) return;
+        applySettings(payload.settings);
+        queue.lastSettings = payload.settings || {};
+        queue.push(payload);
+        flushQueue();
+      }
+
+      const socket = window.io ? window.io() : null;
+      if (socket) {
+        socket.on(`module.${MODULE_ID}`, (payload) => handlePayload(payload));
+      }
+    </script>
+  </body>
+</html>
