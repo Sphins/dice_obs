@@ -1,0 +1,93 @@
+:root {
+  --overlay-x: 30px;
+  --overlay-y: 30px;
+  --overlay-width: 360px;
+  --popup-bg: rgba(20, 20, 20, 0.85);
+  --popup-border: rgba(255, 255, 255, 0.2);
+  --popup-text: #ffffff;
+  --popup-accent: #ffd54a;
+  --popup-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  color: var(--popup-text);
+  background: transparent;
+}
+
+#overlay {
+  position: absolute;
+  left: var(--overlay-x);
+  top: var(--overlay-y);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: var(--overlay-width);
+  pointer-events: none;
+}
+
+.roll-popup {
+  background: var(--popup-bg);
+  border: 1px solid var(--popup-border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: var(--popup-shadow);
+  animation: pop-in 220ms ease-out;
+}
+
+.roll-popup.is-hiding {
+  animation: pop-out 280ms ease-in forwards;
+}
+
+.roll-header {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--popup-accent);
+  margin-bottom: 4px;
+}
+
+.roll-flavor {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+
+.roll-formula {
+  font-family: "Fira Code", "SFMono-Regular", monospace;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.roll-total {
+  font-size: 2.4rem;
+  font-weight: 800;
+  text-align: right;
+  margin-top: 4px;
+}
+
+@keyframes pop-in {
+  from {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pop-out {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+}

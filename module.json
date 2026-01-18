@@ -1,0 +1,21 @@
+{
+  "id": "dice-obs-overlay",
+  "title": "Dice OBS Overlay",
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13",
+    "maximum": "13"
+  },
+  "description": "Expose dice roll pop-ups for OBS via a lightweight overlay page.",
+  "authors": [
+    {
+      "name": "Your Name"
+    }
+  ],
+  "esmodules": ["main.js"],
+  "styles": ["overlay.css"],
+  "url": "",
+  "manifest": "",
+  "download": ""
+}
